@@ -1,0 +1,6 @@
+#ifndef MODEL_DEFINITION
+#define MODEL_DEFINITION
+
+#define OUTPUT_SIZE 4
+
+#endif
