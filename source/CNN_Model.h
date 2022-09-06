@@ -1,0 +1,33 @@
+/*
+ * Create a matrix convolution IP first
+ */
+
+#ifndef CNN_MODEL
+#define CNN_MODEL
+
+#include <ap_fixed.h>
+#include <hls_stream.h>
+
+typedef ap_fixed<32, 2> DATA_32BIT_FP;
+
+typedef DATA_32BIT_FP CNN_IN_DTYPE;
+typedef DATA_32BIT_FP CNN_OUT_DTYPE;
+typedef DATA_32BIT_FP CNN_WEIGHT_DTYPE;
+typedef DATA_32BIT_FP CNN_BIAS_DTYPE;
+
+#define INPUT_DEPTH 3
+#define INPUT_LENGTH 5
+
+#define CNN_KERNEL_DEPTH 3
+#define CNN_KERNEL_LENGTH 3
+#define CNN_KERNEL_STRIDE 1
+
+#define OUTPUT_DEPTH (INPUT_DEPTH - CNN_KERNEL_DEPTH) / CNN_KERNEL_STRIDE + 1
+#define OUTPUT_LENGTH (INPUT_LENGTH - CNN_KERNEL_LENGTH) / CNN_KERNEL_STRIDE + 1
+
+void matrixConv(
+		CNN_IN_DTYPE input[INPUT_DEPTH][INPUT_LENGTH],
+		CNN_WEIGHT_DTYPE weights[CNN_KERNEL_DEPTH][CNN_KERNEL_LENGTH],
+		CNN_OUT_DTYPE output[OUTPUT_DEPTH][OUTPUT_LENGTH]);
+
+#endif
