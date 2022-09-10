@@ -6,10 +6,22 @@
 
 #include "DenseLayer.h"
 
-void DenseLayer_1(float* input, float* weights, float* bias, float* output){
+void compute_dense(){
+	DENSE_OUTPUT_DTYPE pre_softmax_buffer[DENSE_LAYER_OUTPUT_SIZE];
 
-}
+	for (int i = 0; i < DENSE_LAYER_OUTPUT_SIZE; i++) {
+#pragma HLS PIPELINE
 
-void DenseLayer_2(float* input, float* weights, float* bias, float* output){
+		// for each output, calculate confidence
+		DENSE_OUTPUT_DTYPE output = 0;
 
+		for (int j = 0; j < DENSE_LAYER_INPUT_SIZE; j++) {
+			output += cnn_output_buffer[j] * dense_weights[i][j];
+		}
+
+		pre_softmax_buffer[i] = output + dense_bias[i];
+	}
+
+	// compute softmax and return result
+	softmax(pre_softmax_buffer, dense_output, DENSE_LAYER_OUTPUT_SIZE);
 }

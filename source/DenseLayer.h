@@ -7,11 +7,17 @@
 #ifndef DENSE_LAYER
 #define DENSE_LAYER
 
-#define DENSE_LAYER_1_SIZE 736
-#define DENSE_LAYER_2_SIZE 4
+#include "set_weight_bias.h"
+#include "FIR_CNN.h"
 
-void DenseLayer_1(float* input, float* weights, float* bias, float* output);
-void DenseLayer_2(float* input, float* weights, float* bias, float* output);
+typedef float DENSE_OUTPUT_DTYPE;
+
+#define DENSE_LAYER_INPUT_SIZE 736
+#define DENSE_LAYER_OUTPUT_SIZE 3
+
+DENSE_OUTPUT_DTYPE dense_output[DENSE_LAYER_OUTPUT_SIZE];
+
+void compute_dense();
 
 
 #endif

@@ -16,7 +16,7 @@ void reset() {
 	for (int i = 0; i < OUTPUT_LENGTH; i++) {
 #pragma HLS UNROLL
 			for (int d = 0; d < OUTPUT_DEPTH; d++) {
-				input_buffer[i][d] = 0;
+				cnn_output_buffer[i][d] = 0;
 			}
 	}
 }
@@ -26,7 +26,7 @@ void compute_convolution() {
 	for (int i = 1; i < OUTPUT_LENGTH; i++) {
 #pragma HLS UNROLL
 		for (int j = 0; j < OUTPUT_DEPTH; j++) {
-			output_buffer[i][j] = output_buffer[i- 1][j];
+			cnn_output_buffer[i][j] = cnn_output_buffer[i- 1][j];
 		}
 	}
 
@@ -35,7 +35,7 @@ void compute_convolution() {
 	depth: for (int depth = 0; depth < CNN_KERNEL_COUNT; depth++) {
 #pragma HLS PIPELINE
 		// for each data point
-		Oi = 0;
+		CNN_OUT_DTYPE Oi = 0;
 		row: for (int l = 0; l < CNN_KERNEL_LENGTH; l++) {
 #pragma HLS UNROLL
 			// for each value in the depth
@@ -43,6 +43,6 @@ void compute_convolution() {
 				Oi += input_buffer[l][d] * CNN_weights[depth][CNN_KERNEL_LENGTH - l - 1][d];
 			}
 		}
-		output_buffer[0][depth] = relu(Oi + CNN_bias[depth]);
+		relu<CNN_OUT_DTYPE>(Oi + CNN_bias[depth], cnn_output_buffer[0][depth]);
 	}
 }

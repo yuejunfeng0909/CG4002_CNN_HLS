@@ -7,25 +7,29 @@
 #ifndef ACTIVATION
 #define ACTIVATION
 
-#include "model_definition.h"
 #include "hls_math.h"
 
-
-float relu(float x){
+template <typename DTYPE>
+void relu(DTYPE x, DTYPE *y){
 #pragma HLS INLINE
-	return x > 0 ? x : 0;
+	*y = x > 0 ? x : 0;
 }
 
-float softmax(float x[OUTPUT_SIZE]){
+template <typename INTYPE, typename OUTTYPE>
+float softmax(INTYPE *x, OUTTYPE *y, int size){
 #pragma HLS INLINE
-	float sum = 0;
-	for(int i = 0; i < OUTPUT_SIZE; i++){
+	INTYPE sum = 0;
+	INTYPE exponent_buffer[size];
+#pragma HLS ARRAY_PARTITION variable=exponent_buffer type=complete
+
+	for(int i = 0; i < size; i++){
 #pragma HLS UNROLL
-		sum += exp(x[i]);
+		exponent_buffer[i] = exp(x[i]);
+		sum += exponent_buffer[i];
 	}
-	for(int i = 0; i < OUTPUT_SIZE; i++){
+	for(int i = 0; i < size; i++){
 #pragma HLS UNROLL
-		x[i] = exp(x[i]) / sum;
+		y[i] = exponent_buffer[i] / sum;
 	}
 }
 
