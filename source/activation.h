@@ -16,10 +16,10 @@ void relu(DTYPE x, DTYPE *y){
 }
 
 template <typename INTYPE, typename OUTTYPE>
-float softmax(INTYPE *x, OUTTYPE *y, int size){
+void softmax(INTYPE *x, OUTTYPE *y, int size){
 #pragma HLS INLINE
-	INTYPE sum = 0;
-	INTYPE exponent_buffer[size];
+	OUTTYPE sum = 0;
+	OUTTYPE exponent_buffer[size];
 #pragma HLS ARRAY_PARTITION variable=exponent_buffer type=complete
 
 	for(int i = 0; i < size; i++){

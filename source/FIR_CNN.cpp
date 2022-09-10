@@ -1,6 +1,6 @@
 #include "FIR_CNN.h"
 
-void read_input(CNN_IN_DTYPE input[input_depth]){
+void read_input(CNN_IN_DTYPE input[6]){
 #pragma HLS ARRAY_PARTITION variable=input type=complete
 	// shift input register
 	for (int d = 0; d < INPUT_DEPTH; d++) {
@@ -43,6 +43,6 @@ void compute_convolution() {
 				Oi += input_buffer[l][d] * CNN_weights[depth][CNN_KERNEL_LENGTH - l - 1][d];
 			}
 		}
-		relu<CNN_OUT_DTYPE>(Oi + CNN_bias[depth], cnn_output_buffer[0][depth]);
+		relu<CNN_OUT_DTYPE>(Oi + CNN_bias[depth], &cnn_output_buffer[0][depth]);
 	}
 }
