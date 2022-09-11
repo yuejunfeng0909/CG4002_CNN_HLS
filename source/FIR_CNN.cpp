@@ -1,14 +1,14 @@
 #include "FIR_CNN.h"
 
-void read_input(CNN_IN_DTYPE input[6]){
-#pragma HLS ARRAY_PARTITION variable=input type=complete
+void read_input(CNN_RAW_IN_DTYPE *input){
+//#pragma HLS ARRAY_PARTITION variable=input type=complete
 	// shift input register
 	for (int d = 0; d < INPUT_DEPTH; d++) {
 #pragma HLS UNROLL
 		for (int i = 1; i < CNN_KERNEL_LENGTH; i++) {
 			input_buffer[i][d] = input_buffer[i-1][d];
 		}
-		input_buffer[0][d] = input[d];
+		input_buffer[0][d] = (CNN_IN_DTYPE)((float)input[d]/4096.0f);
 	}
 }
 

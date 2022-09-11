@@ -7,7 +7,7 @@ typedef uint16_t DATA_IN_TYPE;
 
 void top_function(
 		ap_uint<3> function_select,
-		uint16_t data_in[],
+		CNN_RAW_IN_DTYPE data_in[],
 		float result_out[],
 		INPUT_DTYPE *weights,
 		INPUT_DTYPE *bias) {
@@ -15,10 +15,10 @@ void top_function(
 
 	if (function_select == 0) {
 		// set CNN layer weights and bias
-		set_CNN_weights_and_bias(*weights, *bias);
+		set_CNN_weights_and_bias(weights, bias);
 	} else if (function_select == 1) {
 		// set Dense layer weights and bias
-		set_dense_weights_and_bias(*weights, *bias);
+		set_dense_weights_and_bias(weights, bias);
 	} else if (function_select == 2) {
 		// input more data
 		read_input(data_in);
