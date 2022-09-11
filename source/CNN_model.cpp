@@ -26,7 +26,7 @@ void top_function(
 		compute_dense();
 	} else if (function_select == 3) {
 		// read result
-		copy(dense_output, result_out, DENSE_OUTPUT_NODES)
+		copy(dense_output, result_out, DENSE_OUTPUT_NODES);
 	} else if (function_select == 4) {
 		// reset CNN output buffer
 		reset();
