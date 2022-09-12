@@ -9,13 +9,11 @@
 
 #include "set_weight_bias.h"
 #include "FIR_CNN.h"
+#include "activation.h"
 
 typedef float DENSE_OUTPUT_DTYPE;
 
-#define DENSE_LAYER_INPUT_SIZE 736
-#define DENSE_LAYER_OUTPUT_SIZE 3
-
-DENSE_OUTPUT_DTYPE dense_output[DENSE_LAYER_OUTPUT_SIZE];
+extern DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES];
 
 void compute_dense();
 

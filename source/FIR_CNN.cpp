@@ -1,14 +1,17 @@
-#include "FIR_CNN.h"
+#include "fir_cnn.h"
+
+CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH];
+CNN_OUT_DTYPE cnn_output_buffer[OUTPUT_LENGTH][OUTPUT_DEPTH];
 
 void read_input(CNN_RAW_IN_DTYPE *input){
-//#pragma HLS ARRAY_PARTITION variable=input type=complete
+#pragma HLS ARRAY_PARTITION variable=input type=complete
 	// shift input register
 	for (int d = 0; d < INPUT_DEPTH; d++) {
 #pragma HLS UNROLL
 		for (int i = 1; i < CNN_KERNEL_LENGTH; i++) {
 			input_buffer[i][d] = input_buffer[i-1][d];
 		}
-		input_buffer[0][d] = (CNN_IN_DTYPE)((float)input[d]/4096.0f);
+		input_buffer[0][d] = (CNN_IN_DTYPE)input[d];
 	}
 }
 
@@ -30,19 +33,18 @@ void compute_convolution() {
 		}
 	}
 
-
 	// for each filter == output depth
-	depth: for (int depth = 0; depth < CNN_KERNEL_COUNT; depth++) {
+	for (int depth = 0; depth < CNN_KERNEL_COUNT; depth++) {
 #pragma HLS PIPELINE
 		// for each data point
 		CNN_OUT_DTYPE Oi = 0;
-		row: for (int l = 0; l < CNN_KERNEL_LENGTH; l++) {
+		for (int l = 0; l < CNN_KERNEL_LENGTH; l++) {
 #pragma HLS UNROLL
 			// for each value in the depth
-			col: for (int d = 0; d < CNN_KERNEL_DEPTH; d++) {
+			for (int d = 0; d < CNN_KERNEL_DEPTH; d++) {
 				Oi += input_buffer[l][d] * CNN_weights[depth][CNN_KERNEL_LENGTH - l - 1][d];
 			}
 		}
-		relu<CNN_OUT_DTYPE>(Oi + CNN_bias[depth], &cnn_output_buffer[0][depth]);
+		cnn_output_buffer[0][depth] = relu<CNN_OUT_DTYPE>(Oi + CNN_bias[depth]);
 	}
 }

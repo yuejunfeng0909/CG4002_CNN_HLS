@@ -4,9 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "C:\\Xilinx\\Vitis_HLS\\2022.1\\include",
-                "C:\\Xilinx\\Vitis_HLS\\2022.1\\include\\etc",
-                "C:\\Xilinx\\Vitis_HLS\\2022.1\\tps\\**",
+                "C:/Xilinx/Vitis_HLS/2022.1/include",
+                "C:/Xilinx/Vitis_HLS/2022.1/include/etc",
+                "C:/Xilinx/Vitis_HLS/2022.1/tps/**",
                 "C:\\Xilinx\\Vitis_HLS\\2022.1\\win64\\tools\\auto_cc\\include"
             ],
             "defines": [
