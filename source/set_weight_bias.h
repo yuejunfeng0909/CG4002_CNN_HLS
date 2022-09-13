@@ -31,21 +31,32 @@ typedef CNN_DTYPE CNN_OUT_DTYPE;
 #define DENSE_INPUT_NODES OUTPUT_LENGTH * CNN_KERNEL_COUNT
 #define DENSE_OUTPUT_NODES 2
 
-extern CNN_WEIGHTS_DTYPE CNN_weights[CNN_KERNEL_COUNT][CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH];
-extern CNN_BIAS_DTYPE CNN_bias[CNN_KERNEL_COUNT];
-
-extern DENSE_WEIGHTS_DTYPE dense_weights[DENSE_OUTPUT_NODES][DENSE_INPUT_NODES];
-extern DENSE_BIAS_DTYPE dense_bias[DENSE_OUTPUT_NODES];
-
 template <typename IN_TYPE, typename OUT_TYPE>
 void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
-#pragma HLS INLINE
 	for (int i = 0; i < size; i++) {
+#pragma HLS UNROLL
 		to[i] = from[i];
 	}
 }
 
-// void set_CNN_weights_and_bias(float *weights, float *bias);
-// void set_dense_weights_and_bias(float *weights, float *bias);
+// void set_CNN_weights_and_bias(
+// 		IN_CNN_WEIGHTS_DTYPE in_weights[CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH], 
+// 		IN_CNN_BIAS_DTYPE in_bias[CNN_KERNEL_COUNT],
+// 		CNN_WEIGHTS_DTYPE CNN_weights[CNN_KERNEL_COUNT][CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH],
+// 		CNN_BIAS_DTYPE CNN_bias[CNN_KERNEL_COUNT]) {
+// 	CNN_WEIGHTS_DTYPE *cnn_weights_alis = &CNN_weights[0][0][0];
+// 	copy<IN_CNN_WEIGHTS_DTYPE, CNN_WEIGHTS_DTYPE>(in_weights, cnn_weights_alis, CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH);
+// 	copy<IN_CNN_BIAS_DTYPE, CNN_BIAS_DTYPE>(in_bias, CNN_bias, CNN_KERNEL_COUNT);
+// }
+
+// void set_dense_weights_and_bias(
+// 		IN_DENSE_WEIGHTS_DTYPE weights[DENSE_OUTPUT_NODES * DENSE_INPUT_NODES], 
+// 		IN_DENSE_BIAS_DTYPE bias[DENSE_OUTPUT_NODES],
+// 		DENSE_WEIGHTS_DTYPE dense_weights[DENSE_OUTPUT_NODES][DENSE_INPUT_NODES],
+// 		DENSE_BIAS_DTYPE dense_bias[DENSE_OUTPUT_NODES]) {
+// 	DENSE_WEIGHTS_DTYPE *dense_weights_alis = &dense_weights[0][0];
+// 	copy<IN_DENSE_WEIGHTS_DTYPE, DENSE_WEIGHTS_DTYPE>(weights, dense_weights_alis, DENSE_OUTPUT_NODES * DENSE_INPUT_NODES);
+// 	copy<IN_DENSE_BIAS_DTYPE, DENSE_BIAS_DTYPE>(bias, dense_bias, DENSE_OUTPUT_NODES);
+// }
 
 #endif

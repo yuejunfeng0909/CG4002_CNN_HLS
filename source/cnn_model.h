@@ -11,7 +11,7 @@ extern DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES];
 
 void top_function(
 		FUNCTION_SELECT_BIT_WIDTH function_select,
-		CNN_RAW_IN_DTYPE data_in[],
-		float result_out[]);
+		CNN_RAW_IN_DTYPE data_in[DENSE_OUTPUT_NODES],
+		float result_out[DENSE_OUTPUT_NODES]);
 
 #endif
