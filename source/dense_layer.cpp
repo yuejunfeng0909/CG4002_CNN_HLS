@@ -6,7 +6,7 @@
 #include "dense_layer.h"
 
 void compute_dense(
-		CNN_OUT_DTYPE cnn_output_buffer[OUTPUT_LENGTH][OUTPUT_DEPTH],
+		CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH],
 		DENSE_WEIGHTS_DTYPE dense_weights[DENSE_OUTPUT_NODES][DENSE_INPUT_NODES],
 		DENSE_BIAS_DTYPE dense_bias[DENSE_OUTPUT_NODES],
 		DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES]){

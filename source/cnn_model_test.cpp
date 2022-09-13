@@ -10,13 +10,18 @@
 void motionDetect() {
 	// for each data
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
-		// for each frame
-		for (int frame = 0; frame < INPUT_LENGTH; frame++) {
-			CNN_RAW_IN_DTYPE input[INPUT_DEPTH];
+		// for each window
+		for (int window_start_index = 0; window_start_index < INPUT_LENGTH - CNN_KERNEL_LENGTH + 1; window_start_index += CNN_KERNEL_STRIDE) {
+			printf("New window from %d to %d\n", window_start_index, window_start_index + CNN_KERNEL_LENGTH);
+			
+			CNN_RAW_IN_DTYPE input[CNN_KERNEL_LENGTH][INPUT_DEPTH];
+			// for each frame
+			for (int frame = 0; frame < CNN_KERNEL_LENGTH; frame++) {
 
-			// for each channel
-			for (int channel = 0; channel < INPUT_DEPTH; channel++) {
-				input[channel] = CNN_RAW_IN_DTYPE(test_x[data_index][frame][channel]);
+				// for each channel
+				for (int channel = 0; channel < INPUT_DEPTH; channel++) {
+					input[frame][channel] = CNN_RAW_IN_DTYPE(test_x[data_index][window_start_index + frame][channel]);
+				}
 			}
 			top_function(0, input, NULL);
 		}
@@ -26,6 +31,7 @@ void motionDetect() {
 		for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
 			printf("for class %d, predicted = %f vs GOLD = %d\n", i, results[i], test_y[data_index][i]);
 		}
+		printf("\n");
 
 		// reset
 		top_function(2, NULL, NULL);
