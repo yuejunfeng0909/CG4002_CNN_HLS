@@ -46,7 +46,7 @@ void copy_inputs(IN_TYPE from[], OUT_TYPE to[]) {
 	for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
 //#pragma HLS UNROLL factor = 3
 		for (int j = 0; j < INPUT_DEPTH; j++) {
-			to[i][j] = from[i][j]/4096.0f;
+			to[i*INPUT_DEPTH + j] = from[i*INPUT_DEPTH + j]/4096.0f;
 		}
 	}
 }

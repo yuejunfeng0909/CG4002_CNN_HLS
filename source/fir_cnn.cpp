@@ -54,7 +54,6 @@ void compute_convolution(
 		// for each data point
 		CNN_OUT_DTYPE Oi = 0;
 		for (int l = 0; l < CNN_KERNEL_LENGTH; l++) {
-#pragma HLS unroll
 			// for each value in the depth
 			for (int d = 0; d < CNN_KERNEL_DEPTH; d++) {
 //				Oi += input_buffer[l][d] * CNN_weights[CNN_KERNEL_LENGTH - l - 1][d][depth]; // WHY DID KERAS REVERSE THE WEIGHTS?
