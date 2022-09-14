@@ -63,6 +63,15 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.ipp": "cpp",
+        "cfloat": "cpp",
+        "climits": "cpp",
+        "queue": "cpp",
+        "cassert": "cpp",
+        "cerrno": "cpp",
+        "ciso646": "cpp",
+        "ios": "cpp",
+        "locale": "cpp"
     }
 }
