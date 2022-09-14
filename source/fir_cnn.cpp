@@ -1,24 +1,11 @@
 #include "fir_cnn.h"
 #include <stdio.h>
 
-void read_input(
-		CNN_RAW_IN_DTYPE input[INPUT_DEPTH],
-		CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH]){
-#pragma HLS ARRAY_PARTITION variable=input type=complete
-	for (int d = 0; d < INPUT_DEPTH; d++) {
-#pragma HLS unroll
-		for (int i = CNN_KERNEL_LENGTH - 1; i > 0; i--) {
-#pragma HLS unroll
-			input_buffer[i][d] = input_buffer[i-1][d];
-		}
-		input_buffer[0][d] = (CNN_IN_DTYPE)input[d];
-	}
-}
-
 void reset(CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]) {
 #pragma HLS ARRAY_PARTITION variable=cnn_output_buffer type=cyclic dim=1 complete
+#pragma HLS INLINE
 	for (int i = 0; i < CNN_OUTPUT_LENGTH; i++) {
-#pragma HLS unroll
+// #pragma HLS unroll
 			for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
 				cnn_output_buffer[i][d] = 0;
 			}
@@ -33,7 +20,7 @@ void compute_convolution(
 #pragma HLS ARRAY_PARTITION variable=input_buffer type=cyclic dim=2 complete
 #pragma HLS ARRAY_PARTITION variable=CNN_weights type=cyclic dim=2 complete
 #pragma HLS ARRAY_PARTITION variable=CNN_bias type=complete
-
+#pragma HLS INLINE
 	// before shift
 	//  printf("\n--------------------------------------------------\n");
 	//  printf("\noutput_buffer before shift: \n");

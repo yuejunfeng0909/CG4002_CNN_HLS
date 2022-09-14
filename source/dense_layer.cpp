@@ -13,6 +13,7 @@ void compute_dense(
 		DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES]){
 #pragma HLS ARRAY_PARTITION variable=dense_weights dim=1 complete
 #pragma HLS ARRAY_PARTITION variable=dense_bias type=complete
+#pragma HLS INLINE
 	// DENSE_OUTPUT_DTYPE pre_softmax_buffer[DENSE_OUTPUT_NODES];
 
 	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {

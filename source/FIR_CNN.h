@@ -6,9 +6,6 @@
 
 typedef int CNN_RAW_IN_DTYPE;
 
-void read_input(
-		CNN_RAW_IN_DTYPE input[INPUT_DEPTH],
-		CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH]);
 void reset(CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]);
 void compute_convolution(
 		CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],

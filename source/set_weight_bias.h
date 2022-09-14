@@ -33,6 +33,7 @@ typedef CNN_DTYPE CNN_OUT_DTYPE;
 
 template <typename IN_TYPE, typename OUT_TYPE>
 void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
+#pragma HLS INLINE
 	for (int i = 0; i < size; i++) {
 #pragma HLS UNROLL
 		to[i] = from[i];
@@ -41,8 +42,9 @@ void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
 
 template <typename IN_TYPE, typename OUT_TYPE>
 void copy_inputs(IN_TYPE from[], OUT_TYPE to[]) {
+#pragma HLS INLINE
 	for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
-#pragma HLS UNROLL
+//#pragma HLS UNROLL factor = 3
 		for (int j = 0; j < INPUT_DEPTH; j++) {
 			to[i][j] = from[i][j]/4096.0f;
 		}
