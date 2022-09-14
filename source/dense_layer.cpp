@@ -12,20 +12,20 @@ void compute_dense(
 		DENSE_BIAS_DTYPE dense_bias[DENSE_OUTPUT_NODES],
 		DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES]
 		){
-#pragma HLS ARRAY_PARTITION variable=dense_weights dim=1 complete
-#pragma HLS ARRAY_PARTITION variable=dense_bias type=complete
-#pragma HLS INLINE
+#pragma HLS ARRAY_PARTITION variable=cnn_output_buffer cyclic factor = 16
+#pragma HLS ARRAY_PARTITION variable=dense_weights cyclic dim=1 factor = 16
+#pragma HLS ARRAY_PARTITION variable=dense_bias cyclic factor = 16
 
-	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
-#pragma HLS pipeline
-
+	CNN_OUT_DTYPE *cnn_output_buffer_ptr = (CNN_OUT_DTYPE *)cnn_output_buffer;
+	DENSE_COMPUTE_OUTPUT: for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+#pragma HLS PIPELINE
 		// for each output, calculate confidence
 		DENSE_OUTPUT_DTYPE output = 0;
 
-		for (int j = 0; j < DENSE_INPUT_NODES; j++) {
-			output += cnn_output_buffer[j/CNN_OUTPUT_DEPTH][j%CNN_OUTPUT_DEPTH] * dense_weights[j][i];
+		DENSE_COMPUTE_OUTPUT_ELEMENT: for (int j = 0; j < DENSE_INPUT_NODES; j++) {
+#pragma HLS UNROLL factor = 10
+			output += cnn_output_buffer_ptr[j] * dense_weights[j][i];
 		}
-
 		dense_output[i] = output + dense_bias[i];
 	}
 

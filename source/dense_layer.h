@@ -24,7 +24,7 @@ template<typename T>
 void argmax(T input[], int *result){
 	DENSE_OUTPUT_DTYPE max = input[0];
 	int max_index = 0;
-	for (int i = 1; i < DENSE_OUTPUT_NODES; i++) {
+	ARGMAX: for (int i = 1; i < DENSE_OUTPUT_NODES; i++) {
 		if (input[i] > max) {
 			max = input[i];
 			max_index = i;

@@ -42,8 +42,7 @@ void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
 
 template <typename IN_TYPE, typename OUT_TYPE>
 void copy_inputs(IN_TYPE from[], OUT_TYPE to[]) {
-#pragma HLS INLINE
-	for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
+	COPY_INPUTS: for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
 //#pragma HLS UNROLL factor = 3
 		for (int j = 0; j < INPUT_DEPTH; j++) {
 			to[i*INPUT_DEPTH + j] = from[i*INPUT_DEPTH + j]/4096.0f;
