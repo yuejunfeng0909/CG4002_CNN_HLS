@@ -1,8 +1,6 @@
 #ifndef WEIGHTS_AND_BIAS
 #define WEIGHTS_AND_BIAS
 
-#include <stdio.h>
-
 typedef float INPUT_DTYPE;
 typedef INPUT_DTYPE IN_CNN_WEIGHTS_DTYPE;
 typedef INPUT_DTYPE IN_CNN_BIAS_DTYPE;
@@ -43,13 +41,12 @@ void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
 
 template <typename IN_TYPE, typename OUT_TYPE>
 void copy_inputs(IN_TYPE from[], OUT_TYPE to[]) {
-	for (int i = 0; i < INPUT_LENGTH; i++) {
+	for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
 #pragma HLS UNROLL
 		for (int j = 0; j < INPUT_DEPTH; j++) {
 			to[i][j] = from[i][j]/4096.0f;
 		}
 	}
-	printf("sample: %f should be ~120\n", to[0][0]);
 }
 
 // void set_CNN_weights_and_bias(

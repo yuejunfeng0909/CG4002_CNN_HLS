@@ -4,7 +4,7 @@
 #include "set_weight_bias.h"
 #include "activation.h"
 
-typedef float CNN_RAW_IN_DTYPE;
+typedef int CNN_RAW_IN_DTYPE;
 
 void read_input(
 		CNN_RAW_IN_DTYPE input[INPUT_DEPTH],

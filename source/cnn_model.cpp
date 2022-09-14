@@ -154,8 +154,8 @@ static DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES];
 
 	if (function_select == 0) {
 		// input more data
-		// copy(&data_in[0][0], &input_buffer[0][0], CNN_KERNEL_LENGTH * INPUT_DEPTH);
-		compute_convolution(data_in, CNN_weights, CNN_bias, cnn_output_buffer);
+		copy_inputs(data_in, input_buffer);
+		compute_convolution(input_buffer, CNN_weights, CNN_bias, cnn_output_buffer);
 		CNN_output_free = (CNN_output_free == 0) ? 0 : CNN_output_free - 1;
 		// when the CNN output count = dense input count, compute dense
 		if (CNN_output_free == 0) {
