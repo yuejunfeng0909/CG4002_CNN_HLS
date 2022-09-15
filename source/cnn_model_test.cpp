@@ -10,10 +10,9 @@
 int confusion[DENSE_OUTPUT_NODES][DENSE_OUTPUT_NODES];
 int accurate_count = 0;
 
-void motionDetect() {
+int result;
 
-	int func_select = 0;
-	// for each data
+void motionDetect() {
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
 		// for each window
 		for (int window_start_index = 0; window_start_index < INPUT_LENGTH - CNN_KERNEL_LENGTH + 1; window_start_index += CNN_KERNEL_STRIDE) {
@@ -38,27 +37,23 @@ void motionDetect() {
 //			 }
 //			 printf("\n");
 			CNN_RAW_IN_DTYPE *input_ptr = &input[0][0];
-			func_select = 0;
-			cnn_action_detection(&func_select, input_ptr, NULL);
+			cnn_action_detection(0, input_ptr, result);
 		}
-		func_select = 1;
-		int *result_ptr;
-		cnn_action_detection(&func_select, NULL, result_ptr);
+		cnn_action_detection(1, NULL, result);
 		int GOLD_result;
-		argmax(test_y[data_index], &GOLD_result);
+		argmax(test_y[data_index], GOLD_result);
 
 		// add to confusion matrix
-		confusion[*result_ptr][GOLD_result]++;
+		confusion[result][GOLD_result]++;
 
-		if (*result_ptr == GOLD_result) {
+		if (result == GOLD_result) {
 			accurate_count += 1;
 		}
 
-		printf("Data %d: predicted = %d vs GOLD = %d\n", data_index, *result_ptr, GOLD_result);
-		
-		func_select = 2;
+		printf("Data %d: predicted = %d vs GOLD = %d\n", data_index, result, GOLD_result);
+
 		// reset
-		cnn_action_detection(&func_select, NULL, NULL);
+		cnn_action_detection(2, NULL, result);
 	}
 
 	// print accuracy
