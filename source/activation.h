@@ -11,7 +11,6 @@
 
 template <typename DTYPE>
 DTYPE relu(DTYPE x){
-#pragma HLS INLINE
 	return x > 0 ? x : 0;
 }
 
