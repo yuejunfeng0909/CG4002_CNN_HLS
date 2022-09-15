@@ -16,7 +16,6 @@ void motionDetect() {
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
 		// for each window
 		for (int window_start_index = 0; window_start_index < INPUT_LENGTH - CNN_KERNEL_LENGTH + 1; window_start_index += CNN_KERNEL_STRIDE) {
-			// printf("\nNew window from %d to %d\n", window_start_index, window_start_index + CNN_KERNEL_LENGTH);
 			
 			CNN_RAW_IN_DTYPE input[CNN_KERNEL_LENGTH][INPUT_DEPTH];
 			// for each frame
@@ -28,14 +27,6 @@ void motionDetect() {
 				}
 			}
 
-//			 print out the window
-//			 for (int frame = 0; frame < CNN_KERNEL_LENGTH; frame++) {
-//			 	for (int channel = 0; channel < INPUT_DEPTH; channel++) {
-//			 		printf("%d, ", input[frame][channel]);
-//			 	}
-//			 	printf("\n");
-//			 }
-//			 printf("\n");
 			CNN_RAW_IN_DTYPE *input_ptr = &input[0][0];
 			cnn_action_detection(0, input_ptr, result);
 		}

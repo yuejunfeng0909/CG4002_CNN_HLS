@@ -1,4 +1,6 @@
 #include "cnn_model.h"
+#include <string.h>
+#include "set_weight_bias.h"
 
 // set up stream
 // #include "ap_int.h"
@@ -9,10 +11,10 @@
 
 void cnn_action_detection(
 		FUNCTION_SELECT_BIT_WIDTH function_select,
-		CNN_RAW_IN_DTYPE data_in[],
+		CNN_RAW_IN_DTYPE *data_in,
 		int &result_out) {
 #pragma HLS INTERFACE mode=s_axilite port=function_select
-#pragma HLS INTERFACE mode=m_axi port=data_in
+#pragma HLS INTERFACE mode=m_axi port=data_in depth=75*6
 #pragma HLS INTERFACE mode=s_axilite port=result_out
 #pragma HLS interface s_axilite port=return bundle=control
 

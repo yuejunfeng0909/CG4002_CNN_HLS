@@ -14,7 +14,4 @@ DTYPE relu(DTYPE x){
 	return x > 0 ? x : 0;
 }
 
-//template <typename INTYPE, typename OUTTYPE>
-//void softmax(INTYPE x[], OUTTYPE y[], int size);
-
 #endif
