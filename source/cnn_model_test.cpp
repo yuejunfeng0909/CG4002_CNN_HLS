@@ -12,6 +12,7 @@ int accurate_count = 0;
 
 int result;
 int result_ready;
+int debug;
 
 void motionDetect() {
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
@@ -29,9 +30,11 @@ void motionDetect() {
 			}
 
 			// CNN_RAW_IN_DTYPE *input_ptr = &input[0];
-			cnn_action_detection(0, input, result, result_ready);
+			cnn_action_detection(0, input, result, result_ready, debug);
+			printf("result: %d, result_ready: %d, debug: %d\n", result, result_ready, debug);
 		}
-		cnn_action_detection(1, NULL, result, result_ready);
+		cnn_action_detection(1, NULL, result, result_ready, debug);
+		printf("result: %d, result_ready: %d, debug: %d\n", result, result_ready, debug);
 		int GOLD_result;
 		argmax(test_y[data_index], GOLD_result);
 
@@ -45,7 +48,7 @@ void motionDetect() {
 		printf("Data %d: predicted = %d vs GOLD = %d\n", data_index, result, GOLD_result);
 
 		// reset
-		cnn_action_detection(2, NULL, result, result_ready);
+		cnn_action_detection(2, NULL, result, result_ready, debug);
 	}
 
 	// print accuracy

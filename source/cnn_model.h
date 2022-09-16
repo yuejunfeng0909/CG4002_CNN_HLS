@@ -13,6 +13,7 @@ void cnn_action_detection(
 		FUNCTION_SELECT_BIT_WIDTH function_select,
 		CNN_RAW_IN_DTYPE data_in[CNN_KERNEL_LENGTH*INPUT_DEPTH],
 		int &result_out,
-		int &result_ready);
+		int &data_required,
+		int &last_input);
 
 #endif
