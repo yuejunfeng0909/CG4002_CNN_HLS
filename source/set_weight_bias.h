@@ -1,6 +1,8 @@
 #ifndef WEIGHTS_AND_BIAS
 #define WEIGHTS_AND_BIAS
 
+#include <string.h>
+
 typedef float INPUT_DTYPE;
 typedef INPUT_DTYPE IN_CNN_WEIGHTS_DTYPE;
 typedef INPUT_DTYPE IN_CNN_BIAS_DTYPE;
@@ -40,11 +42,14 @@ void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
 
 template <typename IN_TYPE, typename OUT_TYPE>
 void copy_inputs(IN_TYPE from[], OUT_TYPE to[]) {
-	COPY_INPUTS: for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
-//#pragma HLS UNROLL factor = 3
-		for (int j = 0; j < INPUT_DEPTH; j++) {
-			to[i*INPUT_DEPTH + j] = from[i*INPUT_DEPTH + j]/4096.0f;
-		}
+#pragma HLS INLINE
+	// burst read
+	IN_TYPE from_buffer[CNN_KERNEL_LENGTH * INPUT_DEPTH];
+	memcpy(from_buffer, from, sizeof(IN_TYPE) * CNN_KERNEL_LENGTH * INPUT_DEPTH);
+
+	// convert to float
+	COPY_INPUTS: for (int i = 0; i < CNN_KERNEL_LENGTH * INPUT_DEPTH; i++) {
+		to[i] = from_buffer[i]/4096.0f;
 	}
 }
 
