@@ -40,19 +40,6 @@ void copy(IN_TYPE *from, OUT_TYPE *to, int size) {
 	}
 }
 
-template <typename IN_TYPE, typename OUT_TYPE>
-void copy_inputs(IN_TYPE from[], OUT_TYPE to[]) {
-#pragma HLS INLINE
-	// burst read
-	IN_TYPE from_buffer[CNN_KERNEL_LENGTH * INPUT_DEPTH];
-	memcpy(from_buffer, from, sizeof(IN_TYPE) * CNN_KERNEL_LENGTH * INPUT_DEPTH);
-
-	// convert to float
-	COPY_INPUTS: for (int i = 0; i < CNN_KERNEL_LENGTH * INPUT_DEPTH; i++) {
-		to[i] = from_buffer[i]/4096.0f;
-	}
-}
-
 // void set_CNN_weights_and_bias(
 // 		IN_CNN_WEIGHTS_DTYPE in_weights[CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH], 
 // 		IN_CNN_BIAS_DTYPE in_bias[CNN_KERNEL_COUNT],

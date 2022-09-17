@@ -14,6 +14,6 @@ void cnn_action_detection(
 		CNN_RAW_IN_DTYPE data_in[CNN_KERNEL_LENGTH*INPUT_DEPTH],
 		int &result_out,
 		int &data_required,
-		int &last_input);
+		float raw_output[DENSE_OUTPUT_NODES]);
 
 #endif

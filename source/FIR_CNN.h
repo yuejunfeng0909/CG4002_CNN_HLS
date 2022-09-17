@@ -4,7 +4,7 @@
 #include "set_weight_bias.h"
 #include "activation.h"
 
-typedef int CNN_RAW_IN_DTYPE;
+typedef float CNN_RAW_IN_DTYPE;
 
 void reset(CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]);
 void compute_convolution(
