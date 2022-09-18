@@ -1,16 +1,6 @@
 #include "fir_cnn.h"
 #include <stdio.h>
 
-void reset(CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]) {
-#pragma HLS ARRAY_PARTITION variable=cnn_output_buffer type=cyclic dim=1 complete
-#pragma HLS INLINE
-	CNN_OUTPUT_REG_RESET: for (int i = 0; i < CNN_OUTPUT_LENGTH; i++) {
-			for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
-				cnn_output_buffer[i][d] = 0;
-			}
-	}
-}
-
 void compute_convolution(
 		CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],
 		CNN_WEIGHTS_DTYPE CNN_weights[CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH][CNN_KERNEL_COUNT],

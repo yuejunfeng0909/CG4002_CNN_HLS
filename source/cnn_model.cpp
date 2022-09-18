@@ -35,7 +35,7 @@ void cnn_action_detection(
 
 	static CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH];
 	static CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH];
-	static DENSE_OUTPUT_DTYPE dense_output[DENSE_OUTPUT_NODES];
+	static DENSE_OUTPUT_DTYPE dense_output_buffer[DENSE_OUTPUT_NODES];
 
 	static int CNN_output_free = CNN_OUTPUT_LENGTH;
 
@@ -43,19 +43,26 @@ void cnn_action_detection(
 		// input more data
 		memcpy(input_buffer, data_in, sizeof(CNN_RAW_IN_DTYPE) * CNN_KERNEL_LENGTH*INPUT_DEPTH);
 		compute_convolution(input_buffer, CNN_weights, CNN_bias, cnn_output_buffer);
-		CNN_output_free = (CNN_output_free == 0) ? 0 : CNN_output_free - 1;
-		// compute dense, need software check if result is valid (data_required == 0)
-		compute_dense(cnn_output_buffer, dense_weights, dense_bias, dense_output);
-		argmax(dense_output, result_out);
-	} else if (function_select == 1) {
-		// read raw results from CNN and dense
 		memcpy(cnn_output, cnn_output_buffer, sizeof(CNN_OUT_DTYPE) * CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH);
-		memcpy(raw_output, dense_output, sizeof(DENSE_OUTPUT_DTYPE) * DENSE_OUTPUT_NODES);
+		// compute dense, need software check if result is valid (data_required == 0)
+		compute_dense(cnn_output_buffer, dense_weights, dense_bias, dense_output_buffer);
+		memcpy(raw_output, dense_output_buffer, sizeof(DENSE_OUTPUT_DTYPE) * DENSE_OUTPUT_NODES);
+		argmax(dense_output_buffer, result_out);
+		CNN_output_free = (CNN_output_free == 0) ? 0 : CNN_output_free - 1;
+		data_required = CNN_output_free;
+	} else if (function_select == 1) {
+		// read raw results from CNN
+		// memcpy(cnn_output, cnn_output_buffer, sizeof(CNN_OUT_DTYPE) * CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH);
 	} else if (function_select == 2) {
 		// reset CNN output buffer
-		reset(cnn_output_buffer);
+		memset(cnn_output_buffer, 0, sizeof(CNN_OUT_DTYPE) * CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH);
+
+		// reset input buffer
+		memset(input_buffer, 0, sizeof(CNN_IN_DTYPE) * CNN_KERNEL_LENGTH*INPUT_DEPTH);
+
 		// reset the number of data required
 		CNN_output_free = CNN_OUTPUT_LENGTH;
+		data_required = CNN_output_free;
 	} else if (function_select == 3) {
 		// set CNN weights
 		memcpy(CNN_weights, weights_and_bias, sizeof(CNN_WEIGHTS_DTYPE) * CNN_KERNEL_LENGTH*CNN_KERNEL_DEPTH*CNN_KERNEL_COUNT);
@@ -71,5 +78,4 @@ void cnn_action_detection(
 	} else {
 		// do nothing
 	}
-	data_required = CNN_output_free;
 }
