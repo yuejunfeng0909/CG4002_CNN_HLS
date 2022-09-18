@@ -13,6 +13,7 @@ int accurate_count = 0;
 int result;
 int result_ready;
 float raw_outputs[DENSE_OUTPUT_NODES];
+float cnn_outputs[CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH];
 
 void motionDetect() {
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
@@ -30,11 +31,31 @@ void motionDetect() {
 			}
 
 			// CNN_RAW_IN_DTYPE *input_ptr = &input[0];
-			cnn_action_detection(0, input, result, result_ready, NULL);
-			printf("result: %d, result_ready: %d, debug: %d\n", result, result_ready, raw_outputs);
+			cnn_action_detection(0, input, result, result_ready, raw_outputs, raw_outputs);
+			// printf("result: %d, result_ready: %d, debug: %d\n", result, result_ready, raw_outputs);
+
+			// print the input
+			printf("input: \n");
+			for (int i = 0; i < CNN_KERNEL_LENGTH; i++) {
+				for (int j = 0; j < INPUT_DEPTH; j++) {
+					printf("%f ", input[i*INPUT_DEPTH + j]);
+				}
+				printf("\n");
+			}
+			printf("\n");
 		}
-		cnn_action_detection(1, NULL, result, result_ready, raw_outputs);
+		cnn_action_detection(1, NULL, result, result_ready, raw_outputs, cnn_outputs);
 		printf("result: %d, result_ready: %d\n", result, result_ready);
+
+		// print the cnn output
+		 printf("cnn output: \n");
+		 for (int i = 0; i < CNN_OUTPUT_LENGTH; i++) {
+		 	for (int j = 0; j < CNN_OUTPUT_DEPTH; j++) {
+		 		printf("%f ", cnn_outputs[i*CNN_OUTPUT_DEPTH + j]);
+		 	}
+		 	printf("\n");
+		 }
+
 		// print the raw outputs 
 		for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
 			printf("%f ", raw_outputs[i]);
@@ -54,7 +75,7 @@ void motionDetect() {
 		printf("Data %d: predicted = %d vs GOLD = %d\n", data_index, result, GOLD_result);
 
 		// reset
-		cnn_action_detection(2, NULL, result, result_ready, raw_outputs);
+		cnn_action_detection(2, NULL, result, result_ready, raw_outputs, raw_outputs);
 	}
 
 	// print accuracy
