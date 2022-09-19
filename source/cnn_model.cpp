@@ -2,15 +2,6 @@
 #include <string.h>
 #include "set_weight_bias.h"
 
-// set up stream
-// #include "ap_int.h"
-//#include "hls_stream.h"
-//
-// typedef ap_int<16> int16_u;  // 16-bit raw data width
-//hls::stream<uint16_t> data_in_stream;  // A stream declaration
-
-// int16_u something;
-
 void cnn_action_detection(
 		FUNCTION_SELECT_BIT_WIDTH function_select,
 		CNN_RAW_IN_DTYPE data_in[CNN_KERNEL_LENGTH*INPUT_DEPTH],
@@ -57,8 +48,8 @@ void cnn_action_detection(
 		// reset CNN output buffer
 		memset(cnn_output_buffer, 0, sizeof(CNN_OUT_DTYPE) * CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH);
 
-		// reset input buffer
-		memset(input_buffer, 0, sizeof(CNN_IN_DTYPE) * CNN_KERNEL_LENGTH*INPUT_DEPTH);
+		// reset raw output buffer
+		memset(raw_output, 0, sizeof(DENSE_OUTPUT_DTYPE) * DENSE_OUTPUT_NODES);
 
 		// reset the number of data required
 		CNN_output_free = CNN_OUTPUT_LENGTH;

@@ -64,12 +64,12 @@ void motionDetect() {
 	printf("Accuracy: %f\n", float(accurate_count) / DATASET_SIZE);
 
 	// print confusion matrix
-	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
-		for (int j = 0; j < DENSE_OUTPUT_NODES; j++) {
-			printf("%d   ", confusion[i][j]);
-		}
-		printf("\n");
-	}
+	// for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+	// 	for (int j = 0; j < DENSE_OUTPUT_NODES; j++) {
+	// 		printf("%d   ", confusion[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
 }
 
 int main() {
