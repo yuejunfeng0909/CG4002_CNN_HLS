@@ -1,11 +1,10 @@
 #include "fir_cnn.h"
-#include <stdio.h>
 
 void compute_convolution(
-		CNN_IN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],
-		CNN_WEIGHTS_DTYPE CNN_weights[CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH][CNN_KERNEL_COUNT],
-		CNN_BIAS_DTYPE CNN_bias[CNN_KERNEL_COUNT],
-		CNN_OUT_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]) {
+		CNN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],
+		CNN_DTYPE CNN_weights[CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH][CNN_KERNEL_COUNT],
+		CNN_DTYPE CNN_bias[CNN_KERNEL_COUNT],
+		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]) {
 
 	// shift output register
 	CNN_REGISTER_SHIFT: for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
@@ -17,18 +16,18 @@ void compute_convolution(
 	// for each filter == output depth
 	CNN_OUTPUT_DEPTH_LEVEL: for (int depth = 0; depth < CNN_KERNEL_COUNT; depth++) {
 		// for each data point
-		CNN_OUT_DTYPE Ol = 0;
+		CNN_DTYPE Ol = 0;
 		CNN_LENGTH_LEVEL: for (int l = 0; l < CNN_KERNEL_LENGTH; l++) {
 #pragma HLS PIPELINE II=5
 			// for each value in the depth
 			
-			CNN_OUT_DTYPE Od = 0;
+			CNN_DTYPE Od = 0;
 			CNN_KERNEL_DEPTH_LEVEL: for (int d = 0; d < CNN_KERNEL_DEPTH; d++) {
 //				Od += input_buffer[l][d] * CNN_weights[CNN_KERNEL_LENGTH - l - 1][d][depth]; // WHY DID KERAS REVERSE THE WEIGHTS?
 				Od += input_buffer[l][d] * CNN_weights[l][d][depth];
 			}
 			Ol += Od;
 		}
-		cnn_output_buffer[CNN_OUTPUT_LENGTH - 1][depth] = relu<CNN_OUT_DTYPE>(Ol + CNN_bias[depth]);
+		cnn_output_buffer[CNN_OUTPUT_LENGTH - 1][depth] = relu(Ol + CNN_bias[depth]);
 	}
 }
