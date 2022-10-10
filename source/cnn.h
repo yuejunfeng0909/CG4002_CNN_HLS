@@ -1,8 +1,6 @@
 #ifndef FIR_CNN
 #define FIR_CNN
 
-#include "activation.h"
-
 typedef float CNN_RAW_IN_DTYPE;
 
 #define CNN_OUTPUT_DEPTH CNN_KERNEL_COUNT

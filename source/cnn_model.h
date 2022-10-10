@@ -1,7 +1,7 @@
 #ifndef CNN_MODEL
 #define CNN_MODEL
 
-#include "fir_cnn.h"
+#include "cnn.h"
 #include "dense_layer.h"
 
 typedef int FUNCTION_SELECT_BIT_WIDTH;

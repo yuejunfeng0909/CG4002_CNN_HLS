@@ -1,4 +1,8 @@
-#include "fir_cnn.h"
+#include "cnn.h"
+
+float relu(float x){
+	return x > 0 ? x : 0;
+}
 
 void compute_convolution(
 		CNN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],

@@ -7,7 +7,7 @@
 #ifndef DENSE_LAYER
 #define DENSE_LAYER
 
-#include "fir_cnn.h"
+#include "cnn.h"
 
 #define DENSE_INPUT_NODES CNN_OUTPUT_LENGTH * CNN_KERNEL_COUNT
 #define DENSE_OUTPUT_NODES 3
