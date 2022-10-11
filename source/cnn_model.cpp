@@ -3,22 +3,12 @@
 
 void cnn_action_detection(
 		FUNCTION_SELECT_BIT_WIDTH function_select,
-		float data_0,
-		float data_1,
-		float data_2,
-		float data_3,
-		float data_4,
-		float data_5,
+		float data[INPUT_DEPTH],
 		float raw_output[DENSE_OUTPUT_NODES],
 		float weights_and_bias[CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH]) {
 #pragma HLS INTERFACE mode=s_axilite port=function_select
-#pragma HLS INTERFACE mode=s_axilite port=data_0
-#pragma HLS INTERFACE mode=s_axilite port=data_1
-#pragma HLS INTERFACE mode=s_axilite port=data_2
-#pragma HLS INTERFACE mode=s_axilite port=data_3
-#pragma HLS INTERFACE mode=s_axilite port=data_4
-#pragma HLS INTERFACE mode=s_axilite port=data_5
-#pragma HLS INTERFACE mode=m_axi port=raw_output depth=3 offset=slave
+#pragma HLS INTERFACE mode=m_axi depth=6 port=data offset=slave
+#pragma HLS INTERFACE mode=m_axi port=raw_output depth=4 offset=slave
 #pragma HLS INTERFACE mode=m_axi port=weights_and_bias depth=576 offset=slave
 #pragma HLS interface s_axilite port=return
 
@@ -31,6 +21,7 @@ void cnn_action_detection(
 	static CNN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH];
 	static CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH];
 	static CNN_DTYPE cnn_output_averaged_buffer[CNN_OUTPUT_DEPTH];
+	static CNN_DTYPE dense_output_buffer[DENSE_OUTPUT_NODES];
 
 	static int remaining_data_required = CNN_KERNEL_LENGTH;
 
@@ -42,12 +33,7 @@ void cnn_action_detection(
 				input_buffer[i][j] = input_buffer[i + 1][j];
 			}
 		}
-		input_buffer[CNN_KERNEL_LENGTH-1][0] = data_0;
-		input_buffer[CNN_KERNEL_LENGTH-1][1] = data_1;
-		input_buffer[CNN_KERNEL_LENGTH-1][2] = data_2;
-		input_buffer[CNN_KERNEL_LENGTH-1][3] = data_3;
-		input_buffer[CNN_KERNEL_LENGTH-1][4] = data_4;
-		input_buffer[CNN_KERNEL_LENGTH-1][5] = data_5;
+		memcpy(input_buffer[CNN_KERNEL_LENGTH - 1], data, INPUT_DEPTH * sizeof(CNN_DTYPE));
 
 		// if enough data is available, start the CNN
 		if (remaining_data_required != 1) {
@@ -59,7 +45,8 @@ void cnn_action_detection(
 		// evaluate neural network result
 		compute_convolution(input_buffer, CNN_weights, CNN_bias, cnn_output_buffer);
 		compute_global_average_pool(cnn_output_buffer, cnn_output_averaged_buffer);
-		compute_dense(cnn_output_averaged_buffer, dense_weights, dense_bias, raw_output);
+		compute_dense(cnn_output_averaged_buffer, dense_weights, dense_bias, dense_output_buffer);
+		memcpy(raw_output, dense_output_buffer, sizeof(float) * DENSE_OUTPUT_NODES);
 
 	} else if (function_select == 1) {
 
