@@ -10,14 +10,21 @@ void compute_convolution(
 		CNN_DTYPE CNN_bias[CNN_KERNEL_COUNT],
 		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]) {
 	// shift output register
-	CNN_REGISTER_SHIFT: for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
-		for (int i = 0; i < CNN_OUTPUT_LENGTH - 1; i++) {
+	// CNN_REGISTER_SHIFT: for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
+	// 	for (int i = 0; i < CNN_OUTPUT_LENGTH - 1; i++) {
+	// 		cnn_output_buffer[i][d] = cnn_output_buffer[i + 1][d];
+	// 	}
+	// }
+	CNN_REGISTER_SHIFT: 
+	for (int i = 0; i < CNN_OUTPUT_LENGTH - 1; i++) {
+		for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
 			cnn_output_buffer[i][d] = cnn_output_buffer[i + 1][d];
 		}
 	}
 
 	// for each filter == output depth
 	CNN_OUTPUT_DEPTH_LEVEL: for (int depth = 0; depth < CNN_KERNEL_COUNT; depth++) {
+#pragma HLS PIPELINE II=10
 		// for each data point
 		CNN_DTYPE Ol = 0;
 		CNN_LENGTH_LEVEL: for (int l = 0; l < CNN_KERNEL_LENGTH; l++) {
@@ -39,6 +46,7 @@ void compute_global_average_pool(
 		CNN_DTYPE averaged[CNN_OUTPUT_DEPTH]) {
 	
 	for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
+#pragma HLS PIPELINE II=5
 		CNN_DTYPE sum = 0;
 		for (int i = 0; i < CNN_OUTPUT_LENGTH; i++) {
 			sum += cnn_output_buffer[i][d];

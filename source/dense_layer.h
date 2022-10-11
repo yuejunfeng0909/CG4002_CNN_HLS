@@ -22,7 +22,7 @@ void compute_dense(
 		);
 
 template<typename T>
-void argmax(T input[], int &result){
+T argmax(T input[]){
 	DENSE_DTYPE max = input[0];
 	int max_index = 0;
 	ARGMAX: for (int i = 1; i < DENSE_OUTPUT_NODES; i++) {
@@ -31,7 +31,7 @@ void argmax(T input[], int &result){
 			max_index = i;
 		}
 	}
-	result = max_index;
+	return max_index;
 }
 
 #endif

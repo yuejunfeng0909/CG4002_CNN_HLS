@@ -12,13 +12,13 @@ void compute_dense(
 		DENSE_DTYPE dense_output[DENSE_OUTPUT_NODES]
 		){
 
-	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
-#pragma HLS PIPELINE II=5
+	DENSE_OUTPUT: for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+#pragma HLS PIPELINE II=17
 
 		// for each output, calculate confidence
 		DENSE_DTYPE output = 0;
 
-		for (int j = 0; j < DENSE_INPUT_NODES; j++) {
+		DENSE_INPUT: for (int j = 0; j < DENSE_INPUT_NODES; j++) {
 			output += input_buffer[j] * dense_weights[j][i];
 		}
 

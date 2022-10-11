@@ -3,20 +3,23 @@
 
 void cnn_action_detection(
 		FUNCTION_SELECT_BIT_WIDTH function_select,
-		float data_in[CNN_KERNEL_LENGTH*INPUT_DEPTH],
-		int &result_out,
-		int &data_required,
+		float data_0,
+		float data_1,
+		float data_2,
+		float data_3,
+		float data_4,
+		float data_5,
 		float raw_output[DENSE_OUTPUT_NODES],
-		float cnn_average_output[CNN_OUTPUT_DEPTH],
-		float cnn_output[CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH],
 		float weights_and_bias[CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH]) {
 #pragma HLS INTERFACE mode=s_axilite port=function_select
-#pragma HLS INTERFACE mode=m_axi port=data_in depth=90 offset=slave
-#pragma HLS INTERFACE mode=s_axilite port=result_out
-#pragma HLS INTERFACE mode=s_axilite port=data_required
+#pragma HLS INTERFACE mode=s_axilite port=data_0
+#pragma HLS INTERFACE mode=s_axilite port=data_1
+#pragma HLS INTERFACE mode=s_axilite port=data_2
+#pragma HLS INTERFACE mode=s_axilite port=data_3
+#pragma HLS INTERFACE mode=s_axilite port=data_4
+#pragma HLS INTERFACE mode=s_axilite port=data_5
 #pragma HLS INTERFACE mode=m_axi port=raw_output depth=3 offset=slave
-#pragma HLS INTERFACE mode=m_axi port=cnn_output depth=130 offset=slave
-#pragma HLS INTERFACE mode=m_axi port=weights_and_bias depth=900 offset=slave
+#pragma HLS INTERFACE mode=m_axi port=weights_and_bias depth=576 offset=slave
 #pragma HLS interface s_axilite port=return
 
 	// Initialize weights and bias
@@ -28,52 +31,56 @@ void cnn_action_detection(
 	static CNN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH];
 	static CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH];
 	static CNN_DTYPE cnn_output_averaged_buffer[CNN_OUTPUT_DEPTH];
-	static DENSE_DTYPE dense_output_buffer[DENSE_OUTPUT_NODES];
 
-	static int CNN_output_free = CNN_OUTPUT_LENGTH;
+	static int remaining_data_required = CNN_KERNEL_LENGTH;
 
 	MAIN_PROCESS: if (function_select == 0) {
 
-		// input more data
-		memcpy(input_buffer, data_in, sizeof(CNN_DTYPE) * CNN_KERNEL_LENGTH*INPUT_DEPTH);
-		compute_convolution(input_buffer, CNN_weights, CNN_bias, cnn_output_buffer);
-		memcpy(cnn_output, cnn_output_buffer, sizeof(CNN_DTYPE) * CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH);
-		compute_global_average_pool(cnn_output_buffer, cnn_output_averaged_buffer);
-		memcpy(cnn_average_output, cnn_output_averaged_buffer, sizeof(CNN_DTYPE) * CNN_OUTPUT_DEPTH);
+		// shift input_buffer to the left
+		for (int i = 0; i < CNN_KERNEL_LENGTH - 1; i++) {
+			for (int j = 0; j < INPUT_DEPTH; j++) {
+				input_buffer[i][j] = input_buffer[i + 1][j];
+			}
+		}
+		input_buffer[CNN_KERNEL_LENGTH-1][0] = data_0;
+		input_buffer[CNN_KERNEL_LENGTH-1][1] = data_1;
+		input_buffer[CNN_KERNEL_LENGTH-1][2] = data_2;
+		input_buffer[CNN_KERNEL_LENGTH-1][3] = data_3;
+		input_buffer[CNN_KERNEL_LENGTH-1][4] = data_4;
+		input_buffer[CNN_KERNEL_LENGTH-1][5] = data_5;
 
-		// compute dense, need software check if result is valid (data_required == 0)
-		compute_dense(cnn_output_averaged_buffer, dense_weights, dense_bias, dense_output_buffer);
-		memcpy(raw_output, dense_output_buffer, sizeof(DENSE_DTYPE) * DENSE_OUTPUT_NODES);
-		argmax(dense_output_buffer, result_out);
-		CNN_output_free = (CNN_output_free == 0) ? 0 : CNN_output_free - 1;
-		data_required = CNN_output_free;
+		// if enough data is available, start the CNN
+		if (remaining_data_required != 1) {
+			remaining_data_required -= 1;
+			memset(raw_output, 0, sizeof(float) * DENSE_OUTPUT_NODES);
+			return;
+		}
+
+		// evaluate neural network result
+		compute_convolution(input_buffer, CNN_weights, CNN_bias, cnn_output_buffer);
+		compute_global_average_pool(cnn_output_buffer, cnn_output_averaged_buffer);
+		compute_dense(cnn_output_averaged_buffer, dense_weights, dense_bias, raw_output);
 
 	} else if (function_select == 1) {
 
-		// (RESERVED DEBUG FUNCTION)
+		remaining_data_required = CNN_KERNEL_LENGTH;
 
-	} else if (function_select == 2) {
-
-		// reset CNN output buffer
+		// reset CNN output buffer, CNN output averaged buffer, and dense output buffer
+		memset(input_buffer, 0, sizeof(CNN_DTYPE) * CNN_KERNEL_LENGTH * INPUT_DEPTH);
 		memset(cnn_output_buffer, 0, sizeof(CNN_DTYPE) * CNN_OUTPUT_LENGTH*CNN_OUTPUT_DEPTH);
-
-		// reset raw output buffer
+		memset(cnn_output_averaged_buffer, 0, sizeof(CNN_DTYPE) * CNN_OUTPUT_DEPTH);
 		memset(raw_output, 0, sizeof(CNN_DTYPE) * DENSE_OUTPUT_NODES);
 
-		// reset the number of data required
-		CNN_output_free = CNN_OUTPUT_LENGTH;
-		data_required = CNN_output_free;
-
-	} else if (function_select == 3) {
+	} else if (function_select == 2) {
 		// set CNN weights
 		memcpy(CNN_weights, weights_and_bias, sizeof(CNN_DTYPE) * CNN_KERNEL_LENGTH*CNN_KERNEL_DEPTH*CNN_KERNEL_COUNT);
-	} else if (function_select == 4) {
+	} else if (function_select == 3) {
 		// set CNN bias
 		memcpy(CNN_bias, weights_and_bias, sizeof(CNN_DTYPE) * CNN_KERNEL_COUNT);
-	} else if (function_select == 5) {
+	} else if (function_select == 4) {
 		// set dense weights
 		memcpy(dense_weights, weights_and_bias, sizeof(DENSE_DTYPE) * DENSE_INPUT_NODES*DENSE_OUTPUT_NODES);
-	} else if (function_select == 6) {
+	} else if (function_select == 5) {
 		// set dense bias
 		memcpy(dense_bias, weights_and_bias, sizeof(DENSE_DTYPE) * DENSE_OUTPUT_NODES);
 	} else {
