@@ -10,7 +10,7 @@
 #include "cnn.h"
 
 #define DENSE_INPUT_NODES CNN_OUTPUT_DEPTH
-#define DENSE_OUTPUT_NODES 4
+#define DENSE_OUTPUT_NODES 5
 
 typedef float DENSE_DTYPE;
 

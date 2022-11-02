@@ -13,7 +13,7 @@ float data[INPUT_DEPTH];
 float raw_outputs[DENSE_OUTPUT_NODES];
 float weights_and_bias[CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH];
 
-void motionDetect() {
+void motionDetect(int user) {
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
 		// feed the whole window
 		for (int i = 0; i < INPUT_LENGTH; i++) {
@@ -21,6 +21,7 @@ void motionDetect() {
 				data[j] = test_x[data_index][i][j];
 			}
 			cnn_action_detection(0,
+				0,
 				data,
 				raw_outputs,
 				weights_and_bias
@@ -47,7 +48,7 @@ void motionDetect() {
 		printf("Data %d: predicted = %d vs GOLD = %d\n\n", data_index, result, GOLD_result);
 
 		// reset
-		cnn_action_detection(1, data, raw_outputs, weights_and_bias);
+		cnn_action_detection(1, 0, data, raw_outputs, weights_and_bias);
 	}
 
 	// print accuracy
@@ -75,5 +76,6 @@ void cnn_layer_test() {
 
 int main() {
 	// cnn_layer_test();
-	motionDetect();
+	motionDetect(0);
+	motionDetect(0);
 }
