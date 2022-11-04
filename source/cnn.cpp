@@ -1,4 +1,5 @@
 #include "cnn.h"
+#include <string.h>
 
 float relu(float x){
 	return x > 0 ? x : 0;
@@ -8,8 +9,14 @@ void compute_convolution(
 		CNN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],
 		CNN_DTYPE CNN_weights[CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH][CNN_KERNEL_COUNT],
 		CNN_DTYPE CNN_bias[CNN_KERNEL_COUNT],
-		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH]) {
+		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH],
+		CNN_DTYPE cnn_output_exit[CNN_OUTPUT_DEPTH]) {
+	
+	memcpy(cnn_output_buffer, cnn_output_exit, sizeof(CNN_DTYPE) * CNN_OUTPUT_DEPTH);
+
+
 	// shift output register
+	// memmove(cnn_output_buffer[0], cnn_output_buffer[1], sizeof(CNN_DTYPE) * CNN_OUTPUT_DEPTH * (CNN_OUTPUT_LENGTH - 1));
 	CNN_REGISTER_SHIFT: 
 	for (int i = 0; i < CNN_OUTPUT_LENGTH - 1; i++) {
 		for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
@@ -38,6 +45,7 @@ void compute_convolution(
 
 void compute_global_average_pool(
 		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH],
+		CNN_DTYPE cnn_output_exit[CNN_OUTPUT_DEPTH],
 		CNN_DTYPE averaged[CNN_OUTPUT_DEPTH]) {
 	
 // 	for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
@@ -50,7 +58,7 @@ void compute_global_average_pool(
 // 	}
 	for (int d = 0; d < CNN_OUTPUT_DEPTH; d++) {
 		averaged[d] += cnn_output_buffer[CNN_OUTPUT_LENGTH - 1][d]/CNN_OUTPUT_LENGTH;
-		averaged[d] -= cnn_output_buffer[0][d]/CNN_OUTPUT_LENGTH;
+		averaged[d] -= cnn_output_exit[d]/CNN_OUTPUT_LENGTH;
 	}
 }
 
