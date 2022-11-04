@@ -16,7 +16,7 @@ typedef float DENSE_DTYPE;
 
 void compute_dense(
 		CNN_DTYPE input_buffer[CNN_OUTPUT_DEPTH],
-		DENSE_DTYPE dense_weights[DENSE_INPUT_NODES][DENSE_OUTPUT_NODES],
+		DENSE_DTYPE dense_weights[DENSE_OUTPUT_NODES][DENSE_INPUT_NODES],
 		DENSE_DTYPE dense_bias[DENSE_OUTPUT_NODES],
 		DENSE_DTYPE dense_output[DENSE_OUTPUT_NODES]
 		);

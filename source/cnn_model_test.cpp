@@ -4,7 +4,7 @@
 #include "cnn_model.h"
 
 #include "cnn_model_test_dataset.h"
-#include "hls_math.h"
+// #include "hls_math.h"
 
 int confusion[DENSE_OUTPUT_NODES][DENSE_OUTPUT_NODES];
 int accurate_count = 0;
@@ -14,15 +14,15 @@ float data[INPUT_DEPTH];
 float raw_outputs[DENSE_OUTPUT_NODES];
 float weights_and_bias[CNN_KERNEL_COUNT * CNN_KERNEL_LENGTH * CNN_KERNEL_DEPTH];
 
-void softmax(float input[], float output[]) {
-	float sum = 0;
-	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
-		sum += hls::exp(input[i]);
-	}
-	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
-		output[i] = hls::exp(input[i]) / sum;
-	}
-}
+// void softmax(float input[], float output[]) {
+// 	float sum = 0;
+// 	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+// 		sum += hls::exp(input[i]);
+// 	}
+// 	for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+// 		output[i] = hls::exp(input[i]) / sum;
+// 	}
+// }
 
 void motionDetect(int user) {
 	for (int data_index = 0; data_index < DATASET_SIZE; data_index++) {
