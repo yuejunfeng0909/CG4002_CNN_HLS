@@ -38,15 +38,23 @@ void motionDetect(int user) {
 				weights_and_bias
 			);
 			result = argmax(raw_outputs);
-		}
-		// print raw outputs
-		// printf("current raw outputs: \n");
-		// for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
-		// 	printf("%f ", raw_outputs[i]);
-		// }
-		// printf("\n");
 
-		// compute softmax
+			// // print raw outputs
+			// printf("current raw outputs: \n");
+			// for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+			// 	printf("%f ", raw_outputs[i]);
+			// }
+			// printf("\n");
+		}
+
+		// print raw outputs
+		printf("current raw outputs: ");
+		for (int i = 0; i < DENSE_OUTPUT_NODES; i++) {
+			printf("%f\t", raw_outputs[i]);
+		}
+		printf("\n");
+
+		// // compute softmax
 		// float softmax_outputs[DENSE_OUTPUT_NODES];
 		// softmax(raw_outputs, softmax_outputs);
 
@@ -54,13 +62,13 @@ void motionDetect(int user) {
 		GOLD_result = argmax(test_y[data_index]);
 
 		// add to confusion matrix
-		confusion[result][GOLD_result]++;
+		confusion[GOLD_result][result]++;
 
 		if (result == GOLD_result) {
 			accurate_count += 1;
 		}
 
-		printf("Data %d: predicted = %d vs GOLD = %d\n", data_index, result, GOLD_result);
+		// printf("Data %d: predicted = %d vs GOLD = %d\n", data_index, result, GOLD_result);
 		
 
 		// reset
